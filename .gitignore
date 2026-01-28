@@ -1,2 +1,37 @@
-/.venv
-/__pycache__
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE / Editor folders
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# --- Project-specific ---
+# OCR raw PDFs (can be large, backend doesn't need them)
+data/pdf/
+
+# OCR generated Markdown
+data/ocr/
+
+# Marker file
+data/kb/.built
+
+# Logs
+/logs/
+*.log
+
+# Secrets
+.env
+.env.local
+*.key

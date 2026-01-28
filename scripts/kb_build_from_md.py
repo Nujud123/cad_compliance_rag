@@ -1,14 +1,9 @@
-"""
-Documentation only.
-This script shows how the Markdown OCR output was chunked into a KB (JSONL).
-Not used in runtime.
-"""
-
+#This script shows how the Markdown OCR output was chunked into a KB (JSONL).
 import re
 import json
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-
+from typing import Union
 
 PAGE_RE = re.compile(
     r"(?:^|\n)\s*(?:Page|PAGE|الصفحة)\s*[:\-]?\s*(\d+)\s*(?:\n|$)",
@@ -150,21 +145,21 @@ def md_to_chunks(
 
     return chunks
 
-
 def build_kb_from_md(
-    md_path: str,
-    out_jsonl_path: str,
+    md_path: Union[str, Path],
+    out_jsonl_path: Union[str, Path],
     *,
     doc_id: str,
     source: str,
 ) -> Dict[str, Any]:
     """Build a JSONL knowledge base from a Markdown file."""
-    md = Path(md_path).read_text(encoding="utf-8")
+    md_path = Path(md_path)
+    out_path = Path(out_jsonl_path)
+
+    md = md_path.read_text(encoding="utf-8")
     chunks = md_to_chunks(md, doc_id=doc_id, source=source)
 
-    out_path = Path(out_jsonl_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-
     with out_path.open("w", encoding="utf-8") as f:
         for ch in chunks:
             f.write(json.dumps(ch, ensure_ascii=False) + "\n")

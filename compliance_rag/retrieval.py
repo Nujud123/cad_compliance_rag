@@ -8,8 +8,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-import config
-
+from . import config
 
 AR_NUM_MAP = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
 
@@ -43,7 +42,7 @@ def tokenize(text: str) -> List[str]:
 def _load_chunks(jsonl_path: str) -> List[Dict[str, Any]]:
     p = Path(jsonl_path)
     if not p.exists():
-        raise FileNotFoundError(f"Chunks file not found: {jsonl_path}")
+        return []
 
     rows: List[Dict[str, Any]] = []
     with open(p, "r", encoding="utf-8") as f:
@@ -97,7 +96,7 @@ def _bm25_rank(
     return scores
 
 
-def _chunks_paths_by_doc(doc: str) -> List[str]:
+def _chunks_paths_by_doc(doc: str) -> List[Path]:
     """Resolve doc name -> KB jsonl path(s)."""
     mapping = {
         "SBC1101": config.KB_SBC1101_PATH,
@@ -259,6 +258,9 @@ def retrieve_evidence(
 
     for path in paths:
         chunks = _load_chunks(path)
+
+        if not chunks:
+            continue
 
         section_hint = (evidence_query or {}).get("section_hint")
         exclude_hints = (evidence_query or {}).get("exclude_hints") or []

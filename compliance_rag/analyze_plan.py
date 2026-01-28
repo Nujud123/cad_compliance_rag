@@ -6,6 +6,7 @@ from .rule_engine import evaluate_rooms
 from .retrieval import retrieve_evidence
 from .text_picker import pick_best_sentence
 
+from . import config
 
 def _is_table_rule(rule_id: str) -> bool:
     return (rule_id or "").startswith("SBC-TABLE-")
@@ -66,6 +67,7 @@ def analyze_plan(
 ) -> Dict[str, Any]:
     rooms = rooms or []
     result = evaluate_rooms(rooms)
+    kb_is_ready = config.kb_ready()
 
     for bucket in ("violations", "warnings"):
         for item in result.get(bucket, []):
@@ -83,7 +85,11 @@ def analyze_plan(
 
             elif item.get("rule_id") == "SBC-UNIT-MIN-1-EXIT-DOOR":
                 prefer = ["باب", "خروج", "وحدة سكنية"]
-
+           
+            if not kb_is_ready:
+                item["evidence"] = []
+                continue
+            
             evidence = retrieve_evidence(eq, top_k=3)
             item["evidence"] = evidence
 

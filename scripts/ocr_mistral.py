@@ -1,15 +1,10 @@
-"""
-Documentation only.
-This script shows how PDFs were converted to Markdown using Mistral OCR.
-Not used in runtime.
-"""
-
+#This script shows how PDFs were converted to Markdown using Mistral OCR.
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 from mistralai import Mistral
 
-ROOT_DIR = Path(__file__).resolve().parents[2]
+ROOT_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = ROOT_DIR / ".env"
 load_dotenv(dotenv_path=ENV_PATH)
 
